@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfumería Tokio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+  :root{
+    --bg: #0c0a08;
+    --bg-alt: #16120e;
+    --card: #1c1712;
+    --gold: #c9a24b;
+    --gold-soft: #a9863d;
+    --cream: #f3e9d8;
+    --cream-dim: #cdbfa9;
+    --wine: #5e1a26;
+    --line: rgba(201,162,75,0.25);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--cream);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    letter-spacing:0.02em;
+  }
+
+  .eyebrow{
+    font-family:'Jost', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color: var(--gold);
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* ===== NAV ===== */
+  nav{
+    position:fixed; top:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 1.6rem 6vw;
+    z-index:100;
+    background: linear-gradient(to bottom, rgba(12,10,8,0.95), transparent);
+    transition: background 0.4s;
+  }
+  .logo{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.5rem;
+    letter-spacing:0.28em;
+    color: var(--cream);
+    display:flex;
+    align-items:center;
+    gap:0.7rem;
+  }
+  .logo-img{ height:34px; width:auto; display:block; }
+  .logo-texto{ color: var(--gold); }
+  .logo span{ color: var(--gold); }
+  .nav-links{ display:flex; gap:2.4rem; font-size:0.82rem; letter-spacing:0.12em; text-transform:uppercase; }
+  .nav-links a{ position:relative; opacity:0.85; transition:opacity 0.3s; }
+  .nav-links a:hover{ opacity:1; }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px;
+    background:var(--gold); transition:width 0.3s;
+  }
+  .nav-links a:hover::after{ width:100%; }
+
+  @media (max-width:760px){ .nav-links{ display:none; } }
+
+  /* ===== HERO ===== */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    position:relative;
+    padding: 0 6vw;
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(201,162,75,0.10), transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(94,26,38,0.25), transparent 60%),
+      var(--bg);
+  }
+
+  .hero .eyebrow{ margin-bottom:1.6rem; opacity:0; animation: fadeUp 1s 0.2s forwards; }
+
+  .hero h1{
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height:0.95;
+    color: var(--cream);
+    opacity:0; animation: fadeUp 1.1s 0.4s forwards;
+  }
+  .hero h1 em{ font-style:italic; color:var(--gold); }
+
+  .hero p{
+    max-width:34ch;
+    margin-top:1.6rem;
+    color: var(--cream-dim);
+    font-size:1.05rem;
+    line-height:1.7;
+    opacity:0; animation: fadeUp 1.1s 0.6s forwards;
+  }
+
+  .hero-cta{
+    margin-top:2.6rem;
+    display:flex; gap:1rem;
+    opacity:0; animation: fadeUp 1.1s 0.8s forwards;
+  }
+
+  .btn{
+    padding:0.9rem 2.1rem;
+    font-size:0.78rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    border:1px solid var(--gold);
+    transition: all 0.35s;
+    cursor:pointer;
+    background:transparent;
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+  }
+  .btn.solid{ background:var(--gold); color:var(--bg); }
+  .btn.solid:hover{ background:transparent; color:var(--gold); }
+  .btn:not(.solid):hover{ background:var(--gold); color:var(--bg); }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .hero-scroll{
+    position:absolute; bottom:2.4rem; left:50%; transform:translateX(-50%);
+    width:1px; height:52px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    opacity:0.7;
+  }
+
+  /* ===== SECTION SHELL ===== */
+  section{ padding: 8rem 6vw; position:relative; }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 4.5rem; }
+  .section-head h2{ font-size:clamp(2.2rem,4.5vw,3.4rem); margin-top:0.8rem; }
+  .section-head p{ color:var(--cream-dim); margin-top:1rem; line-height:1.7; font-size:0.98rem; }
+
+  .divider{
+    width:60px; height:1px; background:var(--gold); margin:0 auto;
+  }
+
+  /* ===== CATALOGO ===== */
+  #catalogo{ background: var(--bg-alt); }
+
+  .grid-catalogo{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    gap: 2.4rem;
+    max-width:1200px; margin:0 auto;
+  }
+
+  .frasco{
+    background: var(--card);
+    border:1px solid var(--line);
+    padding: 2.6rem 2rem 2.2rem;
+    text-align:center;
+    position:relative;
+    transition: transform 0.4s, border-color 0.4s;
+  }
+  .frasco:hover{ transform: translateY(-8px); border-color: var(--gold); }
+
+  .bottle{
+    width:64px; height:104px; margin:0 auto 1.8rem;
+    position:relative;
+  }
+  .bottle .cap{
+    width:26px; height:16px; background: linear-gradient(180deg,#d9b968,#8a6a24);
+    margin:0 auto; border-radius:2px 2px 0 0;
+  }
+  .bottle .neck{ width:12px; height:10px; background:var(--gold-soft); margin:0 auto; }
+  .bottle .body{
+    width:64px; height:78px;
+    background: linear-gradient(160deg, var(--liquid,#7a2436), #2c0d14);
+    border:1px solid rgba(201,162,75,0.4);
+    border-radius: 4px 4px 10px 10px;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.45);
+  }
+
+  .frasco h3{ font-size:1.5rem; color:var(--cream); }
+
+  .frasco-img{
+    position:relative;
+    width:100%;
+    height:240px;
+    margin-bottom:1.8rem;
+    overflow:hidden;
+    background: var(--bg);
+    border:1px solid var(--line);
+  }
+  .frasco-img img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  .badge-agotado{
+    display:none;
+    position:absolute; top:0.8rem; left:0.8rem;
+    background: var(--wine);
+    color: var(--cream);
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:0.4rem 0.8rem;
+    z-index:2;
+  }
+
+  .frasco[data-agotado="true"] .frasco-img img{ filter: grayscale(1) brightness(0.55); }
+  .frasco[data-agotado="true"] .badge-agotado{ display:block; }
+  .frasco[data-agotado="true"] .precio{ opacity:0.4; }
+  .frasco[data-agotado="true"] .btn-pedir{ display:none; }
+  .frasco[data-agotado="true"]:hover{ transform:none; border-color: var(--line); }
+
+  /* ===== DECANTS ===== */
+  #decants{ background: var(--bg-alt); }
+
+  .grid-decants{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+    gap: 2.4rem;
+    max-width:900px; margin:0 auto;
+  }
+
+  .decant-card{
+    background: var(--card);
+    border:1px solid var(--line);
+    padding: 2.4rem 2rem;
+    text-align:center;
+  }
+
+  .decant-card .frasco-img{ height:220px; margin-bottom:1.6rem; }
+
+  .decant-card h3{ font-size:1.6rem; margin-bottom:0.4rem; }
+  .decant-card .tag{ font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:1.4rem; }
+
+  .tamanos{
+    display:flex; gap:0.7rem; justify-content:center; margin-bottom:1.4rem;
+  }
+  .tamano-btn{
+    flex:1;
+    padding:0.7rem 0.4rem;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--cream-dim);
+    font-family:'Jost',sans-serif;
+    font-size:0.82rem;
+    cursor:pointer;
+    transition: all 0.3s;
+  }
+  .tamano-btn.activo, .tamano-btn:hover{ border-color:var(--gold); color:var(--gold); }
+
+  .decant-card .precio{ margin-bottom:1.4rem; }
+  .frasco .tag{ font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:0.5rem 0 1rem; }
+  .frasco .notas{ font-size:0.86rem; color:var(--cream-dim); line-height:1.6; min-height:48px; }
+  .frasco .precio{ margin-top:1.4rem; font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--gold); }
+  .frasco .btn{ margin-top:1.4rem; width:100%; padding:0.75rem; font-size:0.72rem; }
+
+  /* ===== OCASIONES ===== */
+  .grid-ocasiones{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap:1.5rem;
+    max-width:1100px; margin:0 auto;
+  }
+  .ocasion{
+    padding:2.6rem 1.6rem;
+    text-align:center;
+    border:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .ocasion::before{
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(160deg, rgba(201,162,75,0.08), transparent 60%);
+    opacity:0; transition:opacity 0.4s;
+  }
+  .ocasion:hover::before{ opacity:1; }
+  .ocasion .num{ font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:var(--gold-soft); letter-spacing:0.15em; }
+  .ocasion h3{ font-size:1.7rem; margin:0.8rem 0 0.7rem; }
+  .ocasion p{ font-size:0.88rem; color:var(--cream-dim); line-height:1.6; }
+
+  /* ===== PIRAMIDE OLFATIVA (signature) ===== */
+  #notas{ background: var(--bg-alt); }
+
+  .piramide-wrap{
+    display:flex; flex-wrap:wrap; gap:4rem; align-items:center; justify-content:center;
+    max-width:1100px; margin:0 auto;
+  }
+
+  .piramide{
+    width:320px; max-width:80vw;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .piramide .nivel{
+    width:100%; text-align:center; padding:1.2rem 0.6rem;
+    position:relative;
+    clip-path: polygon(15% 0, 85% 0, 100% 100%, 0% 100%);
+    margin-bottom:4px;
+  }
+  .piramide .nivel:nth-child(1){ background:linear-gradient(90deg,#e6cf8e,#c9a24b); width:60%; color:#0c0a08; clip-path:polygon(20% 0,80% 0,100% 100%,0 100%); }
+  .piramide .nivel:nth-child(2){ background:linear-gradient(90deg,#9a5a3a,#7a3f26); width:80%; color:#f3e9d8; }
+  .piramide .nivel:nth-child(3){ background:linear-gradient(90deg,#4a1a22,#2c0d14); width:100%; color:#f3e9d8; clip-path:polygon(8% 0,92% 0,100% 100%,0 100%); }
+  .piramide .nivel b{ display:block; font-family:'Cormorant Garamond',serif; font-size:1.1rem; letter-spacing:0.05em; }
+  .piramide .nivel span{ font-size:0.72rem; opacity:0.85; }
+
+  .piramide-desc{ max-width:380px; }
+  .piramide-desc .item{ margin-bottom:1.6rem; }
+  .piramide-desc .item .eyebrow{ display:block; margin-bottom:0.3rem; }
+  .piramide-desc .item p{ color:var(--cream-dim); font-size:0.92rem; line-height:1.65; }
+
+  /* ===== PEDIDO / CONTACTO ===== */
+  #pedido{
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(94,26,38,0.3), transparent 60%),
+      var(--bg);
+  }
+
+  .form-wrap{
+    max-width:640px; margin:0 auto;
+    border:1px solid var(--line);
+    padding: 3.2rem clamp(1.5rem,5vw,3.5rem);
+    background: var(--card);
+  }
+
+  .campo{ margin-bottom:1.6rem; display:flex; flex-direction:column; gap:0.5rem; }
+  .campo label{ font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-soft); }
+  .campo input, .campo select, .campo textarea{
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--line);
+    padding:0.7rem 0.2rem;
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+    font-size:0.95rem;
+    outline:none;
+    transition:border-color 0.3s;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus{ border-color:var(--gold); }
+  .campo textarea{ resize:vertical; min-height:80px; }
+  .campo select option{ background:var(--bg); color:var(--cream); }
+
+  .fila2{ display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; }
+  @media (max-width:560px){ .fila2{ grid-template-columns:1fr; } }
+
+  .form-wrap .btn.solid{ width:100%; margin-top:1rem; padding:1rem; }
+
+  .confirm{
+    display:none; text-align:center; padding:2rem 0;
+  }
+  .confirm.show{ display:block; }
+  .confirm h3{ color:var(--gold); font-size:1.8rem; margin-bottom:0.6rem; }
+  .confirm p{ color:var(--cream-dim); }
+
+  /* ===== FOOTER ===== */
+  footer{
+    padding: 3rem 6vw 2.4rem;
+    text-align:center;
+    border-top:1px solid var(--line);
+  }
+  footer .logo{ justify-content:center; margin-bottom:0.8rem; }
+  footer p{ font-size:0.78rem; color:var(--cream-dim); letter-spacing:0.05em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><img src="imagenes/logo.png" alt="Perfumería Tokio" class="logo-img"><span class="logo-texto">TOKIO</span></div>
+  <div class="nav-links">
+    <a href="#catalogo">Catálogo</a>
+    <a href="#decants">Decants</a>
+    <a href="#ocasiones">Ocasiones</a>
+    <a href="#notas">Notas</a>
+    <a href="#pedido">Pedido</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">Perfumería de autor</div>
+  <h1>El silencio <em>tiene</em><br>un aroma</h1>
+  <p>Fragancias compuestas en pequeños lotes, pensadas para quienes prefieren dejar una impresión antes que una presentación.</p>
+  <div class="hero-cta">
+    <a href="#catalogo" class="btn solid">Ver catálogo</a>
+    <a href="#pedido" class="btn">Hacer un pedido</a>
+  </div>
+  <div class="hero-scroll"></div>
+</section>
+
+<section id="catalogo">
+  <div class="section-head">
+    <div class="eyebrow">Colección</div>
+    <h2>El catálogo</h2>
+    <p>Seis composiciones, cada una construida sobre una idea distinta de lujo.</p>
+  </div>
+
+  <div class="grid-catalogo">
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Asad Zanzibar 100ml.jpg" alt="Asad Zanzibar 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Asad Zanzibar 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Aqua M EDP 100ml.jpg" alt="Odyssey Aqua M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Aqua M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Memories U Parfum 100ml.jpg" alt="Memories U Parfum 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Memories U Parfum 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Asad Bourbon M EDP 100ml.jpg" alt="Asad Bourbon M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Asad Bourbon M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Khamran Waha U EDP 100ml.jpg" alt="Khamran Waha U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Khamran Waha U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/9 Pm Night Out U Extrait 100ml.jpg" alt="9 Pm Night Out U Extrait 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>9 Pm Night Out U Extrait 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Limoni U EDP 100ml.jpg" alt="Odyssey Limoni U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Limoni U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml.jpg" alt="Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Mandarin Sky Elixir M EDP 100ml.jpg" alt="Odyssey Mandarin Sky Elixir M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Mandarin Sky Elixir M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Dolce & Gabbana Light Blue W EDT 100ml.jpg" alt="Dolce & Gabbana Light Blue W EDT 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Dolce & Gabbana Light Blue W EDT 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Al Haramain Aqua Dubai M Extrait 60ml.jpg" alt="Al Haramain Aqua Dubai M Extrait 60ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Al Haramain Aqua Dubai M Extrait 60ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Asad Elixir M EDP 100ml.jpg" alt="Asad Elixir M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Asad Elixir M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Paris Nitro Red U EDP 100ml.jpg" alt="Paris Nitro Red U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Paris Nitro Red U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Hawas Fire M EDP 100ml.jpg" alt="Hawas Fire M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Hawas Fire M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Al Haramain Gold Edition U Extrait 60ml.jpg" alt="Al Haramain Gold Edition U Extrait 60ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Al Haramain Gold Edition U Extrait 60ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Go Mango Tropical Collection U 100ml.jpg" alt="Odyssey Go Mango Tropical Collection U 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Go Mango Tropical Collection U 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Club de Nuit Intense M EDT 105ml.jpg" alt="Club de Nuit Intense M EDT 105ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Club de Nuit Intense M EDT 105ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/9 Am Pour Femme W EDP 100ml.jpg" alt="9 Am Pour Femme W EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>9 Am Pour Femme W EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/9 PM M EDP 100ml.jpg" alt="9 PM M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>9 PM M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Revolution Ultra Edition M EDP 100ml.jpg" alt="Odyssey Revolution Ultra Edition M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Revolution Ultra Edition M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Spectra U EDP 100ml.jpg" alt="Odyssey Spectra U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Spectra U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Khamrah Dukhan U EDP 100ml.jpg" alt="Khamrah Dukhan U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Khamrah Dukhan U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/9 Am Dive U EDP 100ml.jpg" alt="9 Am Dive U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>9 Am Dive U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Nautica Voyage M EDT 100ml.jpg" alt="Nautica Voyage M EDT 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Nautica Voyage M EDT 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Haya W EDP 100ml.jpg" alt="Haya W EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Haya W EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Maison Alhambra Jean Lowe Vibe M EDP 100ml.jpg" alt="Maison Alhambra Jean Lowe Vibe M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Maison Alhambra Jean Lowe Vibe M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Montale Paris Arabians Tonka U EDP 100ml.jpg" alt="Montale Paris Arabians Tonka U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Montale Paris Arabians Tonka U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Hawas Pour Homme M EDP 100ml.jpg" alt="Hawas Pour Homme M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Hawas Pour Homme M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Odyssey Ba Ha Mas Tropical Collection U EDP 100ml.jpg" alt="Odyssey Ba Ha Mas Tropical Collection U EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Odyssey Ba Ha Mas Tropical Collection U EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Giorgio Armani Acqua Di Gio M EDT 100ml.jpg" alt="Giorgio Armani Acqua Di Gio M EDT 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Giorgio Armani Acqua Di Gio M EDT 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Mast Perfume Stronger Together Intensely M EDP 100ml.jpg" alt="Mast Perfume Stronger Together Intensely M EDP 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Mast Perfume Stronger Together Intensely M EDP 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Mast Perfume Stronger Together M Parfum 100ml.jpg" alt="Mast Perfume Stronger Together M Parfum 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Mast Perfume Stronger Together M Parfum 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+    <div class="frasco" data-agotado="false">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Moments U Parfum 100ml.jpg" alt="Moments U Parfum 100ml">
+        <div class="badge-agotado">Agotado</div>
+      </div>
+      <h3>Moments U Parfum 100ml</h3>
+      <div class="precio">$XXX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+    </div>
+
+  </div>
+</section>
+
+<section id="decants">
+  <div class="section-head">
+    <div class="eyebrow">Para probar antes de decidir</div>
+    <h2>Decants</h2>
+    <p>Las mismas fragancias en formato reducido — ideal para descubrir tu favorita.</p>
+  </div>
+
+  <div class="grid-decants">
+
+    <div class="decant-card">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Game Of Spades Emerald.jpg" alt="Game Of Spades Emerald">
+      </div>
+      <h3>Game Of Spades Emerald</h3>
+      <div class="tag">Disponible en decant</div>
+      <div class="tamanos">
+        <button type="button" class="tamano-btn activo" data-precio="$XX.XXX">2ml</button>
+        <button type="button" class="tamano-btn" data-precio="$XX.XXX">5ml</button>
+        <button type="button" class="tamano-btn" data-precio="$XX.XXX">10ml</button>
+      </div>
+      <div class="precio">$XX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir este decant</a>
+    </div>
+
+    <div class="decant-card">
+      <div class="frasco-img">
+        <img class="foto" src="imagenes/Art Of Universe 100ml.jpg" alt="Art Of Universe">
+      </div>
+      <h3>Art Of Universe</h3>
+      <div class="tag">Disponible en decant</div>
+      <div class="tamanos">
+        <button type="button" class="tamano-btn activo" data-precio="$XX.XXX">2ml</button>
+        <button type="button" class="tamano-btn" data-precio="$XX.XXX">5ml</button>
+        <button type="button" class="tamano-btn" data-precio="$XX.XXX">10ml</button>
+      </div>
+      <div class="precio">$XX.XXX</div>
+      <a href="#pedido" class="btn btn-pedir">Pedir este decant</a>
+    </div>
+
+  </div>
+</section>
+
+<section id="ocasiones">
+  <div class="section-head">
+    <div class="eyebrow">Guía de uso</div>
+    <h2>Para cada ocasión</h2>
+    <p>Una fragancia correcta no compite con el momento: lo acompaña.</p>
+  </div>
+
+  <div class="grid-ocasiones">
+    <div class="ocasion">
+      <div class="num">I</div>
+      <h3>Día &amp; oficina</h3>
+      <p>Composiciones ligeras y discretas — Flor de Sal, Bosque de Cedro.</p>
+    </div>
+    <div class="ocasion">
+      <div class="num">II</div>
+      <h3>Noche &amp; eventos</h3>
+      <p>Intensidad y proyección — Ámbar Nocturno, Rosa Negra.</p>
+    </div>
+    <div class="ocasion">
+      <div class="num">III</div>
+      <h3>Ocasión especial</h3>
+      <p>Piezas de firma para momentos que se recuerdan — Oro Blanco.</p>
+    </div>
+    <div class="ocasion">
+      <div class="num">IV</div>
+      <h3>Regalo</h3>
+      <p>Presentación en caja rígida con grabado — cualquier fragancia del catálogo.</p>
+    </div>
+  </div>
+</section>
+
+<section id="notas">
+  <div class="section-head">
+    <div class="eyebrow">El lenguaje del perfume</div>
+    <h2>La pirámide olfativa</h2>
+    <p>Toda fragancia se revela en tres tiempos.</p>
+  </div>
+
+  <div class="piramide-wrap">
+    <div class="piramide">
+      <div class="nivel"><b>Notas de salida</b><span>Los primeros 15 minutos</span></div>
+      <div class="nivel"><b>Notas de corazón</b><span>El carácter, tras 30 minutos</span></div>
+      <div class="nivel"><b>Notas de fondo</b><span>La huella, varias horas</span></div>
+    </div>
+
+    <div class="piramide-desc">
+      <div class="item">
+        <span class="eyebrow">Salida</span>
+        <p>La primera impresión: cítricos, especias ligeras o notas verdes que se disipan rápido.</p>
+      </div>
+      <div class="item">
+        <span class="eyebrow">Corazón</span>
+        <p>El alma de la fragancia: flores, especias o frutas que definen su personalidad.</p>
+      </div>
+      <div class="item">
+        <span class="eyebrow">Fondo</span>
+        <p>Lo que permanece en la piel: maderas, ámbar, almizcle y resinas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pedido">
+  <div class="section-head">
+    <div class="eyebrow">Reserva tu fragancia</div>
+    <h2>Hacer un pedido</h2>
+    <p>Escríbenos y coordinamos el envío o la cita para probar la colección.</p>
+  </div>
+
+  <div class="form-wrap">
+    <form id="formPedido" action="https://formspree.io/f/mbgreqvp" method="POST">
+      <div class="fila2">
+        <div class="campo">
+          <label for="nombre">Nombre completo</label>
+          <input id="nombre" name="nombre" type="text" required>
+        </div>
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" type="tel" required>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="_replyto" type="email" required>
+      </div>
+
+      <div class="campo">
+        <label for="fragancia">Fragancia de interés</label>
+        <select id="fragancia" name="fragancia">
+          <option>Decant - Game Of Spades Emerald</option>
+          <option>Decant - Art Of Universe</option>
+          <option>Asad Zanzibar 100ml</option>
+          <option>Odyssey Aqua M EDP 100ml</option>
+          <option>Memories U Parfum 100ml</option>
+          <option>Asad Bourbon M EDP 100ml</option>
+          <option>Khamran Waha U EDP 100ml</option>
+          <option>9 Pm Night Out U Extrait 100ml</option>
+          <option>Odyssey Limoni U EDP 100ml</option>
+          <option>Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml</option>
+          <option>Odyssey Mandarin Sky Elixir M EDP 100ml</option>
+          <option>Dolce & Gabbana Light Blue W EDT 100ml</option>
+          <option>Al Haramain Aqua Dubai M Extrait 60ml</option>
+          <option>Asad Elixir M EDP 100ml</option>
+          <option>Paris Nitro Red U EDP 100ml</option>
+          <option>Hawas Fire M EDP 100ml</option>
+          <option>Al Haramain Gold Edition U Extrait 60ml</option>
+          <option>Odyssey Go Mango Tropical Collection U 100ml</option>
+          <option>Club de Nuit Intense M EDT 105ml</option>
+          <option>9 Am Pour Femme W EDP 100ml</option>
+          <option>9 PM M EDP 100ml</option>
+          <option>Odyssey Revolution Ultra Edition M EDP 100ml</option>
+          <option>Odyssey Spectra U EDP 100ml</option>
+          <option>Khamrah Dukhan U EDP 100ml</option>
+          <option>9 Am Dive U EDP 100ml</option>
+          <option>Nautica Voyage M EDT 100ml</option>
+          <option>Haya W EDP 100ml</option>
+          <option>Maison Alhambra Jean Lowe Vibe M EDP 100ml</option>
+          <option>Montale Paris Arabians Tonka U EDP 100ml</option>
+          <option>Hawas Pour Homme M EDP 100ml</option>
+          <option>Odyssey Ba Ha Mas Tropical Collection U EDP 100ml</option>
+          <option>Giorgio Armani Acqua Di Gio M EDT 100ml</option>
+          <option>Mast Perfume Stronger Together Intensely M EDP 100ml</option>
+          <option>Mast Perfume Stronger Together M Parfum 100ml</option>
+          <option>Moments U Parfum 100ml</option>
+          <option>Game Of Spades Emerald</option>
+          <option>Art Of Universe 100ml</option>
+          <option>Aún no estoy seguro/a</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="mensaje">Mensaje o detalles del pedido</label>
+        <textarea id="mensaje" name="mensaje" placeholder="Cantidad, dirección de envío, ocasión, etc."></textarea>
+      </div>
+
+      <input type="hidden" name="_subject" value="Nuevo pedido — Perfumería Tokio">
+
+      <button type="submit" class="btn solid">Enviar pedido</button>
+    </form>
+
+    <div class="confirm" id="confirmacion">
+      <h3>Pedido recibido</h3>
+      <p>Gracias — te contactaremos pronto para confirmar los detalles.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><img src="imagenes/logo.png" alt="Perfumería Tokio" class="logo-img"><span class="logo-texto">TOKIO</span></div>
+  <p>Perfumería de autor — hecha a mano, en lotes pequeños.</p>
+</footer>
+
+<script>
+  document.querySelectorAll('.decant-card').forEach(function(card){
+    const botones = card.querySelectorAll('.tamano-btn');
+    const precioEl = card.querySelector('.precio');
+    botones.forEach(function(boton){
+      boton.addEventListener('click', function(){
+        botones.forEach(function(b){ b.classList.remove('activo'); });
+        boton.classList.add('activo');
+        precioEl.textContent = boton.dataset.precio;
+      });
+    });
+  });
+</script>
+
+<script>
+  const form = document.getElementById('formPedido');
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const boton = form.querySelector('button[type="submit"]');
+    boton.disabled = true;
+    boton.textContent = 'Enviando...';
+
+    try{
+      const respuesta = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if(respuesta.ok){
+        form.style.display = 'none';
+        document.getElementById('confirmacion').classList.add('show');
+      } else {
+        boton.disabled = false;
+        boton.textContent = 'Enviar pedido';
+        alert('No se pudo enviar el pedido. Por favor intenta de nuevo o escríbenos directamente.');
+      }
+    } catch(err){
+      boton.disabled = false;
+      boton.textContent = 'Enviar pedido';
+      alert('No se pudo enviar el pedido. Revisa tu conexión e intenta de nuevo.');
+    }
+  });
+</script>
+
+</body>
+</html>
