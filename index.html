@@ -386,6 +386,104 @@
   }
   footer .logo{ justify-content:center; margin-bottom:0.8rem; }
   footer p{ font-size:0.78rem; color:var(--cream-dim); letter-spacing:0.05em; }
+
+  /* ===== CARRUSEL DE FOTOS POR PRODUCTO ===== */
+  .slide-extra{ opacity:0; z-index:1; transition:opacity 0.35s ease; }
+  .slide-extra.activa{ opacity:1; z-index:2; }
+  .foto.principal-oculta{ opacity:0; }
+
+  .carrusel-flecha{
+    display:none;
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:26px; height:26px;
+    background: rgba(12,10,8,0.65);
+    border:1px solid var(--line);
+    color: var(--gold);
+    font-size:1.05rem;
+    line-height:1;
+    cursor:pointer;
+    z-index:3;
+    align-items:center; justify-content:center;
+  }
+  .frasco-img.tiene-varias .carrusel-flecha{ display:flex; }
+  .flecha-izq{ left:0.5rem; }
+  .flecha-der{ right:0.5rem; }
+
+  /* ===== CARRITO ===== */
+  .carrito-icono{
+    position:relative;
+    background:transparent; border:1px solid var(--line);
+    color:var(--gold); font-size:1.1rem;
+    width:42px; height:42px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .carrito-contador{
+    position:absolute; top:-8px; right:-8px;
+    background:var(--gold); color:var(--bg);
+    font-family:'Jost',sans-serif; font-size:0.68rem; font-weight:600;
+    min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 3px;
+  }
+
+  .carrito-overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(0,0,0,0.6);
+    z-index:200;
+  }
+  .carrito-overlay.abierto{ display:block; }
+
+  .carrito-panel{
+    position:fixed; top:0; right:-380px; bottom:0;
+    width:340px; max-width:88vw;
+    background:var(--card);
+    border-left:1px solid var(--line);
+    z-index:201;
+    display:flex; flex-direction:column;
+    transition:right 0.4s ease;
+  }
+  .carrito-panel.abierto{ right:0; }
+
+  .carrito-header{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:1.4rem 1.4rem 1rem;
+    border-bottom:1px solid var(--line);
+  }
+  .carrito-header h3{ font-size:1.4rem; }
+  .carrito-cerrar{
+    background:none; border:none; color:var(--cream-dim);
+    font-size:1.1rem; cursor:pointer;
+  }
+
+  .carrito-items{ flex:1; overflow-y:auto; padding:1rem 1.4rem; }
+  .carrito-vacio{ color:var(--cream-dim); font-size:0.9rem; text-align:center; margin-top:2rem; }
+
+  .carrito-item{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:0.6rem;
+    padding:0.9rem 0; border-bottom:1px solid var(--line);
+  }
+  .carrito-item-info{ flex:1; }
+  .carrito-item-nombre{ font-size:0.88rem; color:var(--cream); }
+  .carrito-item-precio{ font-size:0.78rem; color:var(--gold-soft); margin-top:0.2rem; }
+
+  .carrito-item-cant{ display:flex; align-items:center; gap:0.4rem; }
+  .carrito-item-cant button{
+    width:22px; height:22px;
+    background:transparent; border:1px solid var(--line); color:var(--cream);
+    cursor:pointer; font-size:0.85rem; line-height:1;
+  }
+  .carrito-item-cant span{ font-size:0.85rem; min-width:16px; text-align:center; }
+
+  .carrito-item-quitar{
+    background:none; border:none; color:var(--wine); cursor:pointer; font-size:0.9rem;
+    margin-left:0.3rem;
+  }
+
+  .carrito-footer{ padding:1.2rem 1.4rem 1.6rem; border-top:1px solid var(--line); }
+  .carrito-enviar{ width:100%; padding:1rem; border-color:#3fae5a; color:#6fd98a; }
+  .carrito-enviar:hover{ background:#3fae5a; color:var(--bg); }
 </style>
 </head>
 <body>
@@ -399,7 +497,25 @@
     <a href="#notas">Notas</a>
     <a href="#pedido">Pedido</a>
   </div>
+  <button type="button" class="carrito-icono" onclick="abrirCarrito()" aria-label="Ver carrito">
+    🛍
+    <span class="carrito-contador" id="carritoContador">0</span>
+  </button>
 </nav>
+
+<div class="carrito-overlay" id="carritoOverlay" onclick="cerrarCarrito()"></div>
+<aside class="carrito-panel" id="carritoPanel">
+  <div class="carrito-header">
+    <h3>Tu pedido</h3>
+    <button type="button" class="carrito-cerrar" onclick="cerrarCarrito()" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="carrito-items" id="carritoItems">
+    <p class="carrito-vacio">Todavía no has agregado nada.</p>
+  </div>
+  <div class="carrito-footer">
+    <button type="button" class="btn solid carrito-enviar" onclick="enviarPedidoWhatsapp()">Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
 
 <section class="hero">
   <div class="eyebrow">Perfumes Árabes y de Diseñador</div>
@@ -423,464 +539,464 @@
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Asad Zanzibar 100ml.jpeg" alt="Asad Zanzibar 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Asad Zanzibar 100ml.jpeg" alt="Asad Zanzibar 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Asad Zanzibar 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Asad Zanzibar 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Asad Zanzibar 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Asad Zanzibar 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Aqua M EDP 100ml.jpeg" alt="Odyssey Aqua M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Aqua M EDP 100ml.jpeg" alt="Odyssey Aqua M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Aqua M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Aqua M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Aqua M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Aqua M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Memories U Parfum 100ml.jpeg" alt="Memories U Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Memories U Parfum 100ml.jpeg" alt="Memories U Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Memories U Parfum 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Memories U Parfum 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Memories U Parfum 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Memories U Parfum 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Asad Bourbon M EDP 100ml.jpeg" alt="Asad Bourbon M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Asad Bourbon M EDP 100ml.jpeg" alt="Asad Bourbon M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Asad Bourbon M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Asad Bourbon M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Asad Bourbon M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Asad Bourbon M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Khamran Waha U EDP 100ml.jpeg" alt="Khamran Waha U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Khamran Waha U EDP 100ml.jpeg" alt="Khamran Waha U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Khamran Waha U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Khamran Waha U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Khamran Waha U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Khamran Waha U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/9 Pm Night Out U Extrait 100ml.jpeg" alt="9 Pm Night Out U Extrait 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/9 Pm Night Out U Extrait 100ml.jpeg" alt="9 Pm Night Out U Extrait 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/9 Pm Night Out U Extrait 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/9 Pm Night Out U Extrait 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>9 Pm Night Out U Extrait 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('9 Pm Night Out U Extrait 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Limoni U EDP 100ml.jpeg" alt="Odyssey Limoni U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Limoni U EDP 100ml.jpeg" alt="Odyssey Limoni U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Limoni U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Limoni U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Limoni U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Limoni U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Dubai Chocolat Gourmand Edition U EDP 100 ml.jpeg" alt="Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Dubai Chocolat Gourmand Edition U EDP 100 ml.jpeg" alt="Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Dubai Chocolat Gourmand Edition U EDP 100 ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Dubai Chocolat Gourmand Edition U EDP 100 ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Mandarin Sky Elixir M EDP 100ml.jpeg" alt="Odyssey Mandarin Sky Elixir M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Mandarin Sky Elixir M EDP 100ml.jpeg" alt="Odyssey Mandarin Sky Elixir M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Mandarin Sky Elixir M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Mandarin Sky Elixir M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Mandarin Sky Elixir M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Mandarin Sky Elixir M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Dolce & Gabbana Light Blue W EDT 100ml.jpeg" alt="Dolce & Gabbana Light Blue W EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Dolce & Gabbana Light Blue W EDT 100ml.jpeg" alt="Dolce & Gabbana Light Blue W EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Dolce & Gabbana Light Blue W EDT 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Dolce & Gabbana Light Blue W EDT 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Dolce & Gabbana Light Blue W EDT 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Dolce & Gabbana Light Blue W EDT 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Al Haramain Aqua Dubai M Extrait 60ml.jpeg" alt="Al Haramain Aqua Dubai M Extrait 60ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Al Haramain Aqua Dubai M Extrait 60ml.jpeg" alt="Al Haramain Aqua Dubai M Extrait 60ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Al Haramain Aqua Dubai M Extrait 60ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Al Haramain Aqua Dubai M Extrait 60ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Al Haramain Aqua Dubai M Extrait 60ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Al Haramain Aqua Dubai M Extrait 60ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Asad Elixir M EDP 100ml.jpeg" alt="Asad Elixir M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Asad Elixir M EDP 100ml.jpeg" alt="Asad Elixir M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Asad Elixir M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Asad Elixir M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Asad Elixir M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Asad Elixir M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Paris Nitro Red U EDP 100ml.jpeg" alt="Paris Nitro Red U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Paris Nitro Red U EDP 100ml.jpeg" alt="Paris Nitro Red U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Paris Nitro Red U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Paris Nitro Red U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Paris Nitro Red U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Paris Nitro Red U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Hawas Fire M EDP 100ml.jpeg" alt="Hawas Fire M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Hawas Fire M EDP 100ml.jpeg" alt="Hawas Fire M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Hawas Fire M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Hawas Fire M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Hawas Fire M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Hawas Fire M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Al haramain gold edition U Extrait 100ml.jpeg" alt="Al Haramain Gold Edition U Extrait 60ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Al haramain gold edition U Extrait 100ml.jpeg" alt="Al Haramain Gold Edition U Extrait 60ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Al haramain gold edition U Extrait 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Al haramain gold edition U Extrait 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Al Haramain Gold Edition U Extrait 60ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Al Haramain Gold Edition U Extrait 60ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Go Mango Tropical Collection U 100ml.jpeg" alt="Odyssey Go Mango Tropical Collection U 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Go Mango Tropical Collection U 100ml.jpeg" alt="Odyssey Go Mango Tropical Collection U 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Go Mango Tropical Collection U 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Go Mango Tropical Collection U 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Go Mango Tropical Collection U 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Go Mango Tropical Collection U 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Club de Nuit Intense M EDT 105ml.jpeg" alt="Club de Nuit Intense M EDT 105ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Club de Nuit Intense M EDT 105ml.jpeg" alt="Club de Nuit Intense M EDT 105ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Club de Nuit Intense M EDT 105ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Club de Nuit Intense M EDT 105ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Club de Nuit Intense M EDT 105ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Club de Nuit Intense M EDT 105ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/9 Am Pour Femme W EDP 100ml.jpeg" alt="9 Am Pour Femme W EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/9 Am Pour Femme W EDP 100ml.jpeg" alt="9 Am Pour Femme W EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/9 Am Pour Femme W EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/9 Am Pour Femme W EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>9 Am Pour Femme W EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('9 Am Pour Femme W EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/9 PM M EDP 100ml.jpeg" alt="9 PM M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/9 PM M EDP 100ml.jpeg" alt="9 PM M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/9 PM M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/9 PM M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>9 PM M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('9 PM M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Revolution Ultra Edition M EDP 100ml.jpeg" alt="Odyssey Revolution Ultra Edition M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Revolution Ultra Edition M EDP 100ml.jpeg" alt="Odyssey Revolution Ultra Edition M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Revolution Ultra Edition M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Revolution Ultra Edition M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Revolution Ultra Edition M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Revolution Ultra Edition M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Spectra U EDP 100ml.jpeg" alt="Odyssey Spectra U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Spectra U EDP 100ml.jpeg" alt="Odyssey Spectra U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Spectra U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Spectra U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Spectra U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Spectra U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Khamrah Dukhan U EDP 100ml.jpeg" alt="Khamrah Dukhan U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Khamrah Dukhan U EDP 100ml.jpeg" alt="Khamrah Dukhan U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Khamrah Dukhan U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Khamrah Dukhan U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Khamrah Dukhan U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Khamrah Dukhan U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/9 Am Dive U EDP 100ml.jpeg" alt="9 Am Dive U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/9 Am Dive U EDP 100ml.jpeg" alt="9 Am Dive U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/9 Am Dive U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/9 Am Dive U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>9 Am Dive U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('9 Am Dive U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Nautica Voyage M EDT 100ml.jpeg" alt="Nautica Voyage M EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Nautica Voyage M EDT 100ml.jpeg" alt="Nautica Voyage M EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Nautica Voyage M EDT 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Nautica Voyage M EDT 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Nautica Voyage M EDT 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Nautica Voyage M EDT 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Haya W EDP 100ml.jpeg" alt="Haya W EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Haya W EDP 100ml.jpeg" alt="Haya W EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Haya W EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Haya W EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Haya W EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Haya W EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Maison Alhambra Jean Lowe Vibe M EDP 100ml.jpeg" alt="Maison Alhambra Jean Lowe Vibe M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Maison Alhambra Jean Lowe Vibe M EDP 100ml.jpeg" alt="Maison Alhambra Jean Lowe Vibe M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Maison Alhambra Jean Lowe Vibe M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Maison Alhambra Jean Lowe Vibe M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Maison Alhambra Jean Lowe Vibe M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Maison Alhambra Jean Lowe Vibe M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Montale Paris Arabians Tonka U EDP 100ml.jpeg" alt="Montale Paris Arabians Tonka U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Montale Paris Arabians Tonka U EDP 100ml.jpeg" alt="Montale Paris Arabians Tonka U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Montale Paris Arabians Tonka U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Montale Paris Arabians Tonka U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Montale Paris Arabians Tonka U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Montale Paris Arabians Tonka U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Hawas Pour Homme M EDP 100ml.jpeg" alt="Hawas Pour Homme M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Hawas Pour Homme M EDP 100ml.jpeg" alt="Hawas Pour Homme M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Hawas Pour Homme M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Hawas Pour Homme M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Hawas Pour Homme M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Hawas Pour Homme M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Odyssey Ba Ha Mas Tropical Collection U EDP 100ml.jpeg" alt="Odyssey Ba Ha Mas Tropical Collection U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Odyssey Ba Ha Mas Tropical Collection U EDP 100ml.jpeg" alt="Odyssey Ba Ha Mas Tropical Collection U EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Odyssey Ba Ha Mas Tropical Collection U EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Odyssey Ba Ha Mas Tropical Collection U EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Odyssey Ba Ha Mas Tropical Collection U EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Odyssey Ba Ha Mas Tropical Collection U EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Giorgio Armani Acqua Di Gio M EDT 100ml.jpeg" alt="Giorgio Armani Acqua Di Gio M EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Giorgio Armani Acqua Di Gio M EDT 100ml.jpeg" alt="Giorgio Armani Acqua Di Gio M EDT 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Giorgio Armani Acqua Di Gio M EDT 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Giorgio Armani Acqua Di Gio M EDT 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Giorgio Armani Acqua Di Gio M EDT 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Giorgio Armani Acqua Di Gio M EDT 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Mast Perfume Stronger Together Intensely M EDP 100ml.jpeg" alt="Mast Perfume Stronger Together Intensely M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Mast Perfume Stronger Together Intensely M EDP 100ml.jpeg" alt="Mast Perfume Stronger Together Intensely M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Mast Perfume Stronger Together Intensely M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Mast Perfume Stronger Together Intensely M EDP 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Mast Perfume Stronger Together Intensely M EDP 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Mast Perfume Stronger Together Intensely M EDP 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Mast Perfume Stronger Together M Parfum 100ml.jpeg" alt="Mast Perfume Stronger Together M Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Mast Perfume Stronger Together M Parfum 100ml.jpeg" alt="Mast Perfume Stronger Together M Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Mast Perfume Stronger Together M Parfum 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Mast Perfume Stronger Together M Parfum 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Mast Perfume Stronger Together M Parfum 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Mast Perfume Stronger Together M Parfum 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
     <div class="frasco" data-agotado="false">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Moments U Parfum 100ml.jpeg" alt="Moments U Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Moments U Parfum 100ml.jpeg" alt="Moments U Parfum 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Moments U Parfum 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Moments U Parfum 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
         <div class="badge-agotado">Agotado</div>
       </div>
       <h3>Moments U Parfum 100ml</h3>
       <div class="precio">$XXX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir esta fragancia</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Moments U Parfum 100ml', '$XXX.XXX')">Agregar al carrito</button>
     </div>
 
   </div>
@@ -897,12 +1013,12 @@
 
     <div class="decant-card">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Game Of Spades Emerald.jpeg" alt="Game Of Spades Emerald" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Game Of Spades Emerald.jpeg" alt="Game Of Spades Emerald" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
-      </div>
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Game Of Spades Emerald 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Game Of Spades Emerald 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
+        </div>
       <h3>Game Of Spades Emerald</h3>
       <div class="tag">Disponible en decant</div>
       <div class="tamanos">
@@ -911,17 +1027,17 @@
         <button type="button" class="tamano-btn" data-precio="$XX.XXX">10ml</button>
       </div>
       <div class="precio">$XX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir este decant</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarDecantAlCarrito(this, 'Game Of Spades Emerald')">Agregar al carrito</button>
     </div>
 
     <div class="decant-card">
       <div class="frasco-img">
-<<<<<<< HEAD
         <img class="foto" src="imagenes/Art Of Universe 100ml.jpeg" alt="Art Of Universe" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
-=======
-        <img class="foto" src="imágenes/Art Of Universe 100ml.jpeg" alt="Art Of Universe" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
->>>>>>> aeff60bf71f1939dded5e974dde6a1a00fbddf75
-      </div>
+        <img class="foto slide-extra" data-slide="1" src="imagenes/Art Of Universe 100ml 2.jpeg" alt="" onerror="this.remove();">
+        <img class="foto slide-extra" data-slide="2" src="imagenes/Art Of Universe 100ml 3.jpeg" alt="" onerror="this.remove();">
+        <button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>
+        <button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>
+        </div>
       <h3>Art Of Universe</h3>
       <div class="tag">Disponible en decant</div>
       <div class="tamanos">
@@ -930,7 +1046,7 @@
         <button type="button" class="tamano-btn" data-precio="$XX.XXX">10ml</button>
       </div>
       <div class="precio">$XX.XXX</div>
-      <a href="#pedido" class="btn btn-pedir">Pedir este decant</a>
+      <button type="button" class="btn btn-pedir" onclick="agregarDecantAlCarrito(this, 'Art Of Universe')">Agregar al carrito</button>
     </div>
 
   </div>
@@ -1104,6 +1220,131 @@
 </script>
 
 <script>
+  // Carrusel: mostrar flechas solo si al menos una foto extra cargó
+  document.querySelectorAll('.frasco-img').forEach(function(cont){
+    const extras = cont.querySelectorAll('.slide-extra');
+    extras.forEach(function(img){
+      img.addEventListener('load', function(){
+        cont.classList.add('tiene-varias');
+      });
+    });
+  });
+
+  function moverCarrusel(boton, direccion){
+    const cont = boton.closest('.frasco-img');
+    const principal = cont.querySelector('.foto:not(.slide-extra)');
+    const extras = Array.from(cont.querySelectorAll('.slide-extra'));
+    const slides = [principal, ...extras];
+    let indiceActual = slides.findIndex(function(s){ return s.classList.contains('activa') || s === principal && !principal.classList.contains('principal-oculta'); });
+    if(indiceActual === -1) indiceActual = 0;
+
+    let siguiente = indiceActual + direccion;
+    if(siguiente < 0) siguiente = slides.length - 1;
+    if(siguiente >= slides.length) siguiente = 0;
+
+    slides.forEach(function(s){ s.classList.remove('activa'); s.classList.remove('principal-oculta'); });
+    if(slides[siguiente] === principal){
+      // el principal ya no tiene clase, queda visible por defecto (opacity heredada)
+    } else {
+      principal.classList.add('principal-oculta');
+      slides[siguiente].classList.add('activa');
+    }
+  }
+
+  // ===== CARRITO =====
+  const NUMERO_WHATSAPP = "573203600654";
+  let carrito = [];
+
+  function agregarAlCarrito(nombre, precio){
+    const existente = carrito.find(function(i){ return i.nombre === nombre; });
+    if(existente){
+      existente.cantidad += 1;
+    } else {
+      carrito.push({ nombre: nombre, precio: precio, cantidad: 1 });
+    }
+    actualizarCarrito();
+    abrirCarrito();
+  }
+
+  function agregarDecantAlCarrito(boton, nombreBase){
+    const tarjeta = boton.closest('.decant-card');
+    const tamanoBtn = tarjeta.querySelector('.tamano-btn.activo');
+    const tamano = tamanoBtn ? tamanoBtn.textContent : '';
+    const precio = tamanoBtn ? tamanoBtn.dataset.precio : '$XX.XXX';
+    const nombreCompleto = 'Decant ' + nombreBase + ' (' + tamano + ')';
+    agregarAlCarrito(nombreCompleto, precio);
+  }
+
+  function cambiarCantidad(nombre, delta){
+    const item = carrito.find(function(i){ return i.nombre === nombre; });
+    if(!item) return;
+    item.cantidad += delta;
+    if(item.cantidad <= 0){
+      carrito = carrito.filter(function(i){ return i.nombre !== nombre; });
+    }
+    actualizarCarrito();
+  }
+
+  function quitarDelCarrito(nombre){
+    carrito = carrito.filter(function(i){ return i.nombre !== nombre; });
+    actualizarCarrito();
+  }
+
+  function actualizarCarrito(){
+    const contador = document.getElementById('carritoContador');
+    const totalItems = carrito.reduce(function(acc, i){ return acc + i.cantidad; }, 0);
+    contador.textContent = totalItems;
+
+    const cont = document.getElementById('carritoItems');
+    if(carrito.length === 0){
+      cont.innerHTML = '<p class="carrito-vacio">Todavía no has agregado nada.</p>';
+      return;
+    }
+
+    cont.innerHTML = carrito.map(function(item){
+      const nombreEscapado = item.nombre.replace(/'/g, "\\'");
+      return '<div class="carrito-item">' +
+        '<div class="carrito-item-info">' +
+          '<div class="carrito-item-nombre">' + item.nombre + '</div>' +
+          '<div class="carrito-item-precio">' + item.precio + '</div>' +
+        '</div>' +
+        '<div class="carrito-item-cant">' +
+          '<button type="button" onclick="cambiarCantidad(\'' + nombreEscapado + '\', -1)">−</button>' +
+          '<span>' + item.cantidad + '</span>' +
+          '<button type="button" onclick="cambiarCantidad(\'' + nombreEscapado + '\', 1)">+</button>' +
+        '</div>' +
+        '<button type="button" class="carrito-item-quitar" onclick="quitarDelCarrito(\'' + nombreEscapado + '\')" aria-label="Quitar">✕</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function abrirCarrito(){
+    document.getElementById('carritoPanel').classList.add('abierto');
+    document.getElementById('carritoOverlay').classList.add('abierto');
+  }
+
+  function cerrarCarrito(){
+    document.getElementById('carritoPanel').classList.remove('abierto');
+    document.getElementById('carritoOverlay').classList.remove('abierto');
+  }
+
+  function enviarPedidoWhatsapp(){
+    if(carrito.length === 0){
+      alert('Tu carrito está vacío. Agrega al menos una fragancia antes de enviar el pedido.');
+      return;
+    }
+    let mensaje = 'Hola, quiero hacer este pedido:%0A%0A';
+    carrito.forEach(function(item){
+      mensaje += '• ' + item.nombre + ' x' + item.cantidad + ' — ' + item.precio + '%0A';
+    });
+    mensaje += '%0A¿Me confirman disponibilidad y forma de pago?';
+    mensaje = mensaje.replace(/ /g, '%20');
+    const url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + mensaje;
+    window.open(url, '_blank');
+  }
+</script>
+
+<script>
   const form = document.getElementById('formPedido');
   form.addEventListener('submit', async function(e){
     e.preventDefault();
@@ -1136,3 +1377,4 @@
 
 </body>
 </html>
+
