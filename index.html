@@ -638,10 +638,76 @@
 .lb-izq{ left:1rem; }
 .lb-der{ right:1rem; }
 
+/* ===== FRANJA ANIMADA ===== */
+.franja{
+  position:fixed; top:0; left:0; right:0;
+  height:34px;
+  background:var(--gold);
+  color:var(--bg);
+  overflow:hidden;
+  z-index:110;
+  display:flex; align-items:center;
+}
+.franja-pista{
+  display:flex;
+  width:max-content;
+  animation: franjaMover 28s linear infinite;
+}
+.franja-pista span{
+  padding:0 2.5rem;
+  font-size:0.72rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:500;
+  white-space:nowrap;
+}
+.franja:hover .franja-pista{ animation-play-state:paused; }
+
+@keyframes franjaMover{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+
+/* La barra de navegación baja para no taparse con la franja */
+nav{ top:34px; }
+
+/* ===== BARRA ENVÍO GRATIS ===== */
+.envio-gratis{ margin-bottom:1.2rem; }
+.envio-texto{
+  font-size:0.8rem;
+  color:var(--cream-dim);
+  margin-bottom:0.6rem;
+  text-align:center;
+  line-height:1.4;
+}
+.envio-texto b{ color:var(--gold); font-weight:500; }
+.envio-barra{
+  height:6px;
+  background:rgba(201,162,75,0.15);
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.envio-relleno{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--gold-soft), var(--gold));
+  transition:width 0.5s ease;
+}
+.envio-relleno.completo{ background:linear-gradient(90deg,#3fae5a,#6fd98a); }
+
 </style>
 </head>
 <body>
-
+<div class="franja">
+  <div class="franja-pista">
+    <span>✦ Perfumes 100% originales</span>
+    <span>✦ Envíos gratis por compras superiores a $XXX.XXX</span>
+    <span>✦ Envíos a toda Colombia</span>
+    <span>✦ Perfumes 100% originales</span>
+    <span>✦ Envíos gratis por compras superiores a $XXX.XXX</span>
+    <span>✦ Envíos a toda Colombia</span>
+  </div>
+</div>
 <nav>
   <div class="logo"><img src="imagenes/logo.png" alt="Perfumería Tokio" class="logo-img"><span class="logo-texto">TOKIO</span></div>
   <div class="nav-links">
@@ -680,7 +746,11 @@
   <div class="carrito-items" id="carritoItems">
     <p class="carrito-vacio">Todavía no has agregado nada.</p>
   </div>
-    <div class="carrito-footer">
+      <div class="carrito-footer">
+    <div class="envio-gratis">
+      <p class="envio-texto" id="envioTexto"></p>
+      <div class="envio-barra"><div class="envio-relleno" id="envioRelleno"></div></div>
+    </div>
     <div class="carrito-total">
       <span>Total</span>
       <span id="carritoTotal">$0</span>
@@ -1378,6 +1448,7 @@
   // ===== CARRITO =====
   const NUMERO_WHATSAPP = "573144478189";
   let carrito = [];
+  const ENVIO_GRATIS_DESDE = 250000;   // cambia este valor por el real
 
   function agregarAlCarrito(nombre, precio){
     const existente = carrito.find(function(i){ return i.nombre === nombre; });
@@ -1413,18 +1484,41 @@
     carrito = carrito.filter(function(i){ return i.nombre !== nombre; });
     actualizarCarrito();
   }
-  function calcularTotal(){
-    const total = carrito.reduce(function(acc, i){
-      return acc + (parseInt(i.precio.replace(/\D/g, ''), 10) || 0) * i.cantidad;
-    }, 0);
-    return '$' + total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    function formatoPesos(n){
+    return '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
+  function totalNumerico(){
+    return carrito.reduce(function(acc, i){
+      return acc + (parseInt(i.precio.replace(/\D/g, ''), 10) || 0) * i.cantidad;
+    }, 0);
+  }
+
+  function calcularTotal(){
+    return formatoPesos(totalNumerico());
+  }
+
+  function actualizarEnvio(){
+    const total = totalNumerico();
+    const texto = document.getElementById('envioTexto');
+    const relleno = document.getElementById('envioRelleno');
+    const porcentaje = Math.min(100, (total / ENVIO_GRATIS_DESDE) * 100);
+    relleno.style.width = porcentaje + '%';
+
+    if(total >= ENVIO_GRATIS_DESDE){
+      texto.innerHTML = '🎉 <b>¡Tienes envío gratis!</b>';
+      relleno.classList.add('completo');
+    } else {
+      texto.innerHTML = 'Te faltan <b>' + formatoPesos(ENVIO_GRATIS_DESDE - total) + '</b> para el envío gratis';
+      relleno.classList.remove('completo');
+    }
+  }
   function actualizarCarrito(){
     const contador = document.getElementById('carritoContador');
     const totalItems = carrito.reduce(function(acc, i){ return acc + i.cantidad; }, 0);
     contador.textContent = totalItems;
-    document.getElementById('carritoTotal').textContent = calcularTotal(); 
+    document.getElementById('carritoTotal').textContent = calcularTotal();
+    actualizarEnvio(); 
     const cont = document.getElementById('carritoItems');
     if(carrito.length === 0){
       cont.innerHTML = '<p class="carrito-vacio">Todavía no has agregado nada.</p>';
@@ -1569,7 +1663,7 @@ function enviarPedidoWhatsapp(){
       if(e.key === 'ArrowLeft') mostrar(indice - 1);
       if(e.key === 'ArrowRight') mostrar(indice + 1);
     });
-    
+
     // Zoom con rueda del mouse
     lienzo.addEventListener('wheel', function(e){
       e.preventDefault();
@@ -1615,6 +1709,9 @@ function enviarPedidoWhatsapp(){
     lienzo.addEventListener('pointerup', soltar);
     lienzo.addEventListener('pointercancel', soltar);
   })();
+  
+  actualizarCarrito();
+
 </script>
 
 </body>
