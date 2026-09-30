@@ -573,6 +573,32 @@
   .carrito-footer{ padding:1.2rem 1.4rem 1.6rem; border-top:1px solid var(--line); }
   .carrito-enviar{ width:100%; padding:1rem; border-color:#3fae5a; color:#6fd98a; }
   .carrito-enviar:hover{ background:#3fae5a; color:var(--bg); }
+
+  /* ===== BUSCADOR ===== */
+.buscador{ margin:2rem auto 0; max-width:420px; }
+.buscador input{
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--line);
+  padding:0.8rem 0.2rem;
+  color:var(--cream);
+  font-family:'Jost',sans-serif;
+  font-size:1rem;
+  text-align:center;
+  outline:none;
+  transition:border-color 0.3s;
+}
+.buscador input:focus{ border-color:var(--gold); }
+.buscador input::placeholder{ color:var(--cream-dim); opacity:0.6; }
+
+.sin-resultados{
+  display:none;
+  text-align:center;
+  color:var(--cream-dim);
+  margin-top:2rem;
+}
+
 </style>
 </head>
 <body>
@@ -627,6 +653,9 @@
     <div class="eyebrow">Colección</div>
     <h2>El catálogo</h2>
     <p>El aroma correcto no se elige al azar. Se encuentra.</p>
+    <div class="buscador">
+      <input type="search" id="buscador" placeholder="Buscar perfume..." autocomplete="off">
+    </div>
   </div>
 
   <div class="grid-catalogo">
@@ -1094,6 +1123,8 @@
     </div>
 
   </div>
+  <p class="sin-resultados" id="sinResultados">No encontramos ese perfume. Prueba con otra palabra.</p>
+
 </section>
 
 <section id="decants">
@@ -1229,10 +1260,18 @@
   </div>
 </footer>
 
+<div class="lightbox" id="lightbox">
+  <button type="button" class="lightbox-cerrar" id="lightboxCerrar" aria-label="Cerrar">✕</button>
+  <div class="lightbox-lienzo" id="lightboxLienzo">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+</div>
 <script>
   document.querySelectorAll('.decant-card').forEach(function(card){
     const botones = card.querySelectorAll('.tamano-btn');
     const precioEl = card.querySelector('.precio');
+    const activo = card.querySelector('.tamano-btn.activo');   
+    if(activo) precioEl.textContent = activo.dataset.precio;   
     botones.forEach(function(boton){
       boton.addEventListener('click', function(){
         botones.forEach(function(b){ b.classList.remove('activo'); });
@@ -1352,51 +1391,142 @@
     document.getElementById('carritoOverlay').classList.remove('abierto');
   }
 
-  function enviarPedidoWhatsapp(){
-    if(carrito.length === 0){
-      alert('Tu carrito está vacío. Agrega al menos una fragancia antes de enviar el pedido.');
-      return;
-    }
-    let mensaje = 'Hola, quiero hacer este pedido:%0A%0A';
-    carrito.forEach(function(item){
-      mensaje += '• ' + item.nombre + ' x' + item.cantidad + ' — ' + item.precio + '%0A';
-    });
-    mensaje += '%0A¿Me confirman disponibilidad y forma de pago?';
-    mensaje = mensaje.replace(/ /g, '%20');
-    const url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + mensaje;
-    window.open(url, '_blank');
+function enviarPedidoWhatsapp(){
+  if(carrito.length === 0){
+    alert('Tu carrito está vacío. Agrega al menos una fragancia antes de enviar el pedido.');
+    return;
+  }
+  let mensaje = 'Hola, quiero hacer este pedido:\n\n';
+  carrito.forEach(function(item){
+    mensaje += '• ' + item.nombre + ' x' + item.cantidad + ' — ' + item.precio + '\n';
+  });
+  mensaje += '\n¿Me confirman disponibilidad y forma de pago?';
+
+  const url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(mensaje);
+  window.open(url, '_blank');
+
   }
 </script>
 
 <script>
-  const form = document.getElementById('formPedido');
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const boton = form.querySelector('button[type="submit"]');
-    boton.disabled = true;
-    boton.textContent = 'Enviando...';
+  // ===== AGOTADOS AL FINAL =====
+  const gridCatalogo = document.querySelector('.grid-catalogo');
+  Array.from(gridCatalogo.children)
+    .sort(function(a, b){
+      return (a.dataset.agotado === 'true') - (b.dataset.agotado === 'true');
+    })
+    .forEach(function(el){ gridCatalogo.appendChild(el); });
 
-    try{
-      const respuesta = await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      });
+  // ===== BUSCADOR =====
+  const buscador = document.getElementById('buscador');
+  const sinResultados = document.getElementById('sinResultados');
 
-      if(respuesta.ok){
-        form.style.display = 'none';
-        document.getElementById('confirmacion').classList.add('show');
-      } else {
-        boton.disabled = false;
-        boton.textContent = 'Enviar pedido';
-        alert('No se pudo enviar el pedido. Por favor intenta de nuevo o escríbenos directamente.');
-      }
-    } catch(err){
-      boton.disabled = false;
-      boton.textContent = 'Enviar pedido';
-      alert('No se pudo enviar el pedido. Revisa tu conexión e intenta de nuevo.');
-    }
+  function normalizar(texto){
+    return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  buscador.addEventListener('input', function(){
+    const q = normalizar(buscador.value.trim());
+    let visibles = 0;
+    gridCatalogo.querySelectorAll('.frasco').forEach(function(f){
+      const nombre = normalizar(f.querySelector('h3').textContent);
+      const coincide = nombre.includes(q);
+      f.style.display = coincide ? '' : 'none';
+      if(coincide) visibles++;
+    });
+    sinResultados.style.display = visibles === 0 ? 'block' : 'none';
   });
+
+  // ===== ZOOM (LIGHTBOX) =====
+  (function(){
+    const lb = document.getElementById('lightbox');
+    const lienzo = document.getElementById('lightboxLienzo');
+    const img = document.getElementById('lightboxImg');
+    const MIN = 1, MAX = 5;
+    let escala = 1, x = 0, y = 0;
+    const punteros = new Map();
+    let distInicial = 0, escalaInicial = 1;
+
+    function aplicar(){
+      img.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + escala + ')';
+    }
+    function reset(){ escala = 1; x = 0; y = 0; aplicar(); }
+    function abrir(src, alt){
+      img.src = src; img.alt = alt || '';
+      reset();
+      lb.classList.add('abierto');
+      document.body.style.overflow = 'hidden';
+    }
+    function cerrar(){
+      lb.classList.remove('abierto');
+      document.body.style.overflow = '';
+      punteros.clear();
+    }
+    function fijarEscala(nueva){
+      escala = Math.min(MAX, Math.max(MIN, nueva));
+      if(escala === 1){ x = 0; y = 0; }
+      aplicar();
+    }
+
+    // Abrir al tocar la foto visible de cualquier producto
+    document.addEventListener('click', function(e){
+      const cont = e.target.closest('.frasco-img');
+      if(!cont || e.target.closest('.carrusel-flecha')) return;
+      const visible = cont.querySelector('.slide-extra.activa') || cont.querySelector('.foto:not(.slide-extra)');
+      if(!visible || visible.style.display === 'none') return;
+      abrir(visible.src, visible.alt);
+    });
+
+    // Cerrar
+    document.getElementById('lightboxCerrar').addEventListener('click', cerrar);
+    lienzo.addEventListener('click', function(e){ if(e.target === lienzo) cerrar(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') cerrar(); });
+
+    // Zoom con rueda del mouse
+    lienzo.addEventListener('wheel', function(e){
+      e.preventDefault();
+      fijarEscala(escala * (e.deltaY < 0 ? 1.15 : 0.87));
+    }, { passive: false });
+
+    // Doble clic / doble toque: alterna zoom
+    img.addEventListener('dblclick', function(){
+      fijarEscala(escala > 1 ? 1 : 2.5);
+    });
+
+    // Arrastrar y pellizcar (mouse y táctil)
+    lienzo.addEventListener('pointerdown', function(e){
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if(punteros.size === 2){
+        const p = Array.from(punteros.values());
+        distInicial = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+        escalaInicial = escala;
+      }
+      if(escala > 1) img.classList.add('arrastrando');
+    });
+
+    lienzo.addEventListener('pointermove', function(e){
+      if(!punteros.has(e.pointerId)) return;
+      const previo = punteros.get(e.pointerId);
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if(punteros.size === 2){
+        const p = Array.from(punteros.values());
+        const dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+        if(distInicial > 0) fijarEscala(escalaInicial * (dist / distInicial));
+      } else if(escala > 1){
+        x += e.clientX - previo.x;
+        y += e.clientY - previo.y;
+        aplicar();
+      }
+    });
+
+    function soltar(e){
+      punteros.delete(e.pointerId);
+      if(punteros.size === 0) img.classList.remove('arrastrando');
+    }
+    lienzo.addEventListener('pointerup', soltar);
+    lienzo.addEventListener('pointercancel', soltar);
+  })();
 </script>
 
 </body>
