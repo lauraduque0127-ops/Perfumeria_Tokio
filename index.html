@@ -599,6 +599,45 @@
   margin-top:2rem;
 }
 
+/* ===== TOTAL CARRITO ===== */
+.carrito-total{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:1rem;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem;
+  color:var(--cream);
+}
+.carrito-total span:last-child{ color:var(--gold); }
+
+/* ===== REDES EN NAV ===== */
+.nav-derecha{ display:flex; align-items:center; gap:1.4rem; }
+.nav-redes{ display:flex; align-items:center; gap:1rem; }
+.nav-redes a{ color:var(--gold-soft); display:flex; transition:color 0.3s; }
+.nav-redes a:hover{ color:var(--gold); }
+
+@media (max-width:560px){
+  .nav-derecha{ gap:0.8rem; }
+  .nav-redes{ gap:0.7rem; }
+  .nav-redes svg{ width:17px; height:17px; }
+  .logo{ font-size:1.2rem; letter-spacing:0.18em; }
+}
+/* ===== FLECHAS LIGHTBOX ===== */
+.lightbox-flecha{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:46px; height:46px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid var(--line);
+  color:var(--cream);
+  font-size:1.6rem; line-height:1;
+  cursor:pointer;
+  z-index:2;
+  display:none;
+  align-items:center; justify-content:center;
+}
+.lightbox.varias .lightbox-flecha{ display:flex; }
+.lb-izq{ left:1rem; }
+.lb-der{ right:1rem; }
+
 </style>
 </head>
 <body>
@@ -611,10 +650,25 @@
     <a href="#ocasiones">Ocasiones</a>
     <a href="#notas">Notas</a>
   </div>
-  <button type="button" class="carrito-icono" onclick="abrirCarrito()" aria-label="Ver carrito">
-    🛍
-    <span class="carrito-contador" id="carritoContador">0</span>
-  </button>
+
+  <div class="nav-derecha">
+    <div class="nav-redes">
+      <a href="https://wa.me/573144478189" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.31a8.2 8.2 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.26-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.99-1.22-.74-.65-1.23-1.46-1.38-1.71-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.76-1.85-.2-.48-.41-.42-.56-.42-.14 0-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.22.89 2.4 1.02 2.57.12.17 1.75 2.67 4.24 3.74.59.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+      </a>
+      <a href="https://instagram.com/perfumeriatokio" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+      </a>
+      <a href="https://tiktok.com/@perfumeria_tokio" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.5 2c.3 2.1 1.6 3.7 3.9 3.9v2.9c-1.4.1-2.7-.3-3.9-1v6.7c0 3.5-2.8 6-6.1 6-1.3 0-2.5-.4-3.5-1.2A6.1 6.1 0 0 1 5 14.9c0-3.4 2.7-6.1 6.1-6.1.4 0 .8 0 1.2.1v3c-.4-.1-.8-.2-1.2-.2-1.6 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3V2h2.4z"/></svg>
+      </a>
+    </div>
+
+    <button type="button" class="carrito-icono" onclick="abrirCarrito()" aria-label="Ver carrito">
+      🛍
+      <span class="carrito-contador" id="carritoContador">0</span>
+    </button>
+  </div>
 </nav>
 
 <div class="carrito-overlay" id="carritoOverlay" onclick="cerrarCarrito()"></div>
@@ -626,7 +680,11 @@
   <div class="carrito-items" id="carritoItems">
     <p class="carrito-vacio">Todavía no has agregado nada.</p>
   </div>
-  <div class="carrito-footer">
+    <div class="carrito-footer">
+    <div class="carrito-total">
+      <span>Total</span>
+      <span id="carritoTotal">$0</span>
+    </div>
     <button type="button" class="btn solid carrito-enviar" onclick="enviarPedidoWhatsapp()">Enviar pedido por WhatsApp</button>
   </div>
 </aside>
@@ -1262,10 +1320,13 @@
 
 <div class="lightbox" id="lightbox">
   <button type="button" class="lightbox-cerrar" id="lightboxCerrar" aria-label="Cerrar">✕</button>
+  <button type="button" class="lightbox-flecha lb-izq" id="lightboxPrev" aria-label="Anterior">‹</button>
+  <button type="button" class="lightbox-flecha lb-der" id="lightboxNext" aria-label="Siguiente">›</button>
   <div class="lightbox-lienzo" id="lightboxLienzo">
     <img id="lightboxImg" src="" alt="">
   </div>
 </div>
+
 <script>
   document.querySelectorAll('.decant-card').forEach(function(card){
     const botones = card.querySelectorAll('.tamano-btn');
@@ -1352,12 +1413,18 @@
     carrito = carrito.filter(function(i){ return i.nombre !== nombre; });
     actualizarCarrito();
   }
+  function calcularTotal(){
+    const total = carrito.reduce(function(acc, i){
+      return acc + (parseInt(i.precio.replace(/\D/g, ''), 10) || 0) * i.cantidad;
+    }, 0);
+    return '$' + total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
 
   function actualizarCarrito(){
     const contador = document.getElementById('carritoContador');
     const totalItems = carrito.reduce(function(acc, i){ return acc + i.cantidad; }, 0);
     contador.textContent = totalItems;
-
+    document.getElementById('carritoTotal').textContent = calcularTotal(); 
     const cont = document.getElementById('carritoItems');
     if(carrito.length === 0){
       cont.innerHTML = '<p class="carrito-vacio">Todavía no has agregado nada.</p>';
@@ -1400,6 +1467,7 @@ function enviarPedidoWhatsapp(){
   carrito.forEach(function(item){
     mensaje += '• ' + item.nombre + ' x' + item.cantidad + ' — ' + item.precio + '\n';
   });
+  mensaje += '\nTotal: ' + calcularTotal() + '\n';  
   mensaje += '\n¿Me confirman disponibilidad y forma de pago?';
 
   const url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(mensaje);
@@ -1451,9 +1519,18 @@ function enviarPedidoWhatsapp(){
       img.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + escala + ')';
     }
     function reset(){ escala = 1; x = 0; y = 0; aplicar(); }
-    function abrir(src, alt){
-      img.src = src; img.alt = alt || '';
+        let fotos = [], indice = 0;
+
+    function mostrar(i){
+      indice = (i + fotos.length) % fotos.length;
+      img.src = fotos[indice].src;
+      img.alt = fotos[indice].alt || '';
       reset();
+    }
+    function abrir(lista, i){
+      fotos = lista;
+      lb.classList.toggle('varias', fotos.length > 1);
+      mostrar(i);
       lb.classList.add('abierto');
       document.body.style.overflow = 'hidden';
     }
@@ -1472,16 +1549,27 @@ function enviarPedidoWhatsapp(){
     document.addEventListener('click', function(e){
       const cont = e.target.closest('.frasco-img');
       if(!cont || e.target.closest('.carrusel-flecha')) return;
+      const lista = Array.from(cont.querySelectorAll('.foto')).filter(function(f){
+        return f.style.display !== 'none' && f.complete && f.naturalWidth > 0;
+      });
+      if(!lista.length) return;
       const visible = cont.querySelector('.slide-extra.activa') || cont.querySelector('.foto:not(.slide-extra)');
-      if(!visible || visible.style.display === 'none') return;
-      abrir(visible.src, visible.alt);
+      abrir(lista, Math.max(0, lista.indexOf(visible)));
     });
 
     // Cerrar
     document.getElementById('lightboxCerrar').addEventListener('click', cerrar);
     lienzo.addEventListener('click', function(e){ if(e.target === lienzo) cerrar(); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') cerrar(); });
-
+    // Cambiar de foto
+    document.getElementById('lightboxPrev').addEventListener('click', function(){ mostrar(indice - 1); });
+    document.getElementById('lightboxNext').addEventListener('click', function(){ mostrar(indice + 1); });
+    document.addEventListener('keydown', function(e){
+      if(!lb.classList.contains('abierto')) return;
+      if(e.key === 'ArrowLeft') mostrar(indice - 1);
+      if(e.key === 'ArrowRight') mostrar(indice + 1);
+    });
+    
     // Zoom con rueda del mouse
     lienzo.addEventListener('wheel', function(e){
       e.preventDefault();
