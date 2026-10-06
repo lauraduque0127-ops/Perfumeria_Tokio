@@ -695,6 +695,63 @@ nav{ top:34px; }
 }
 .envio-relleno.completo{ background:linear-gradient(90deg,#3fae5a,#6fd98a); }
 
+/* ===== FILTROS CATÁLOGO ===== */
+.catalogo-layout{
+  display:flex; gap:2.4rem; align-items:flex-start;
+  max-width:1400px; margin:0 auto;
+}
+.catalogo-contenido{ flex:1; min-width:0; }
+.catalogo-contenido .grid-catalogo{ margin:0; }
+
+.filtros{
+  width:230px; flex-shrink:0;
+  position:sticky; top:140px;
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:1.6rem 1.4rem;
+}
+.filtros h4{
+  font-family:'Jost',sans-serif; font-weight:400;
+  font-size:0.72rem; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--gold);
+  margin:1.4rem 0 0.7rem;
+}
+.filtros h4:first-child{ margin-top:0; }
+
+.chips{ display:flex; flex-wrap:wrap; gap:0.5rem; }
+.chip{
+  padding:0.5rem 0.9rem;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--cream-dim);
+  font-family:'Jost',sans-serif; font-size:0.78rem;
+  cursor:pointer; transition:all 0.3s;
+}
+.chip:hover, .chip.activo{ border-color:var(--gold); color:var(--gold); }
+.chip.limpiar{ width:100%; margin-top:1.6rem; text-align:center; }
+
+#chipsMarca{
+  max-height:260px;
+  overflow-y:auto;
+  padding-right:4px;
+}
+
+.filtros select{
+  width:100%;
+  background:var(--bg);
+  color:var(--cream);
+  border:1px solid var(--line);
+  padding:0.6rem 0.5rem;
+  font-family:'Jost',sans-serif; font-size:0.85rem;
+  outline:none;
+}
+.filtros select:focus{ border-color:var(--gold); }
+
+@media (max-width:900px){
+  .catalogo-layout{ flex-direction:column; gap:1.6rem; }
+  .filtros{ width:100%; position:static; }
+}
+
 </style>
 </head>
 <body>
@@ -785,6 +842,35 @@ nav{ top:34px; }
       <input type="search" id="buscador" placeholder="Buscar perfume..." autocomplete="off">
     </div>
   </div>
+
+  <div class="catalogo-layout">
+    <aside class="filtros">
+      <h4>Género</h4>
+      <div class="chips" id="chipsGenero">
+        <button type="button" class="chip activo" data-genero="todos">Todos</button>
+        <button type="button" class="chip" data-genero="M">Hombre</button>
+        <button type="button" class="chip" data-genero="W">Mujer</button>
+        <button type="button" class="chip" data-genero="U">Unisex</button>
+      </div>
+
+      <h4>Marca</h4>
+      <div class="chips" id="chipsMarca">
+        <button type="button" class="chip activo" data-marca="todas">Todas</button>
+      </div>
+
+      <h4>Ordenar</h4>
+      <select id="selOrden">
+        <option value="original">Destacados</option>
+        <option value="az">Nombre A–Z</option>
+        <option value="menor">Precio: menor a mayor</option>
+        <option value="mayor">Precio: mayor a menor</option>
+        <option value="marca">Por marca</option>
+      </select>
+
+      <button type="button" class="chip limpiar" id="limpiarFiltros">Limpiar filtros</button>
+    </aside>
+
+    <div class="catalogo-contenido">  
 
   <div class="grid-catalogo">
 
@@ -1345,6 +1431,8 @@ nav{ top:34px; }
 
   <p class="sin-resultados" id="sinResultados">No encontramos ese perfume. Prueba con otra palabra.</p>
 
+    </div>
+  </div>
 </section>
 
 <section id="decants">
@@ -1672,24 +1760,236 @@ function enviarPedidoWhatsapp(){
     })
     .forEach(function(el){ gridCatalogo.appendChild(el); });
 
-  // ===== BUSCADOR =====
+  // ===== BUSCADOR + FILTROS + ORDEN =====
   const buscador = document.getElementById('buscador');
   const sinResultados = document.getElementById('sinResultados');
+  const selOrden = document.getElementById('selOrden');
+  const chipsGenero = document.querySelectorAll('#chipsGenero .chip');
+  const chipsMarca = document.getElementById('chipsMarca');
+
+  let generoActivo = 'todos';
+  let marcaActiva = 'todas';
 
   function normalizar(texto){
     return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
+  function clave(t){
+    return normalizar(t).replace(/\s+/g, '');
+  }
 
-  buscador.addEventListener('input', function(){
+  // Casa de cada perfume. El nombre debe ser igual al del catálogo
+  // (no importan mayúsculas, tildes ni espacios).
+  const CASAS = {
+    'Asad Zanzibar 100ml':'Lattafa',
+    'Odyssey Aqua M EDP 100ml':'Armaf',
+    'Memories U Parfum 100ml':'La Tansaa',
+    'Asad Bourbon M EDP 100ml':'Lattafa',
+    'Khamran Waha U EDP 100ml':'Lattafa',
+    '9 Pm Night Out U Extrait 100ml':'Afnan',
+    'Odyssey Limoni U EDP 100ml':'Armaf',
+    'Odyssey Dubai Chocolat Gourmand Edition U EDP 100ml':'Armaf',
+    'Odyssey Mandarin Sky Elixir M EDP 100ml':'Armaf',
+    'Dolce & Gabbana Light Blue W EDT 100ml':'Diseñador',
+    'Al Haramain Aqua Dubai M Extrait 60ml':'Amber Oud',
+    'Asad Elixir M EDP 100ml':'Lattafa',
+    'Paris Nitro Red U EDP 100ml':'Dumont Paris',
+    'Hawas Fire M EDP 100ml':'Rasasi',
+    'Al Haramain Gold Edition U Extrait 60ml':'Amber Oud',
+    'Odyssey Go Mango Tropical Collection U 100ml':'Armaf',
+    'Club de Nuit Intense M EDT 105ml':'Armaf',
+    '9 Am Pour Femme W EDP 100ml':'Afnan',
+    '9 PM M EDP 100ml':'Afnan',
+    'Odyssey Revolution Ultra Edition M EDP 100ml':'Armaf',
+    'Odyssey Spectra U EDP 100ml':'Armaf',
+    'Khamrah Dukhan U EDP 100ml':'Lattafa',
+    '9 Am Dive U EDP 100ml':'Afnan',
+    'Nautica Voyage M EDT 100ml':'Diseñador',
+    'Haya W EDP 100ml':'Lattafa',
+    'Maison Alhambra Jean Lowe Vibe M EDP 100ml':'Lattafa',
+    'Montale Paris Arabians Tonka U EDP 100ml':'Nicho',
+    'Hawas Pour Homme M EDP 100ml':'Rasasi',
+    'Odyssey Ba Ha Mas Tropical Collection U EDP 100ml':'Armaf',
+    'Giorgio Armani Acqua Di Gio M EDT 100ml':'Diseñador',
+    'Mast Perfume Stronger Together Intensely M EDP 100ml':'Bharara',
+    'Mast Perfume Stronger Together M Parfum 100ml':'Bharara',
+    'Moments U Parfum 100ml':'La Tansaa',
+
+    'Supremacy Collector\'s Edition M EDP 100ml':'Afnan',
+    'Eter Arabian Sky M EDP 100ml':'Armaf',
+    'Soprano Ice U EDP 100ml':'Dumont Paris',
+    'Vulcan Feu U EDP 100ml':'French Avenue',
+    'Odyssey Homme White M EDP 100ml':'Armaf',
+    'Qimmah W EDP 100ml':'Lattafa',
+    'Badee Al Oud Honor And Glory U EDP 100ml':'Lattafa',
+    'CK One M EDT 100ml':'Calvin Klein',
+    'Now Pink W EDP 100ml':'Rave',
+    'Amber Empire W EDP 100ml':'French Avenue',
+    'Midnight Frost Tangerine U EDP 100ml':'Anfar',
+    'Issey Miyake 125ml':'Issey Miyake',
+    'Mayar Natural Intense 100ml':'Lattafa',
+    'Mayar Cherry Intense 100ml':'Lattafa',
+    'Rome Pour Femme 100ml':'Bharara',
+    'Midnight Frost Intense M Extrait 100ml':'Anfar',
+    'Badee Al Oud Amethyst U EDP 100ml':'Lattafa',
+    '212 VIP M EDT 100ml':'Carolina Herrera',
+    'Yara Elixir W EDP 100ml':'Lattafa',
+    'Vulcan Sable U EDP 100ml':'French Avenue',
+    'Hawas Private Luceo U EDP 100ml':'Rasasi',
+    '9 Pm Elixir M Perfume 100ml':'Afnan',
+    'Liquid Brun U EDP 100ml':'French Avenue',
+    'Pacific Aura M EDP 100ml':'Rayhaan',
+    'Hayaati M EDP 100ml':'Lattafa',
+    'Rome Melancholia M EDP 100ml':'Mast Perfume',
+    'Tropical Vibe U EDP 100ml':'Rayhaan',
+    'Nitro Gold U Extrait 100ml':'Dumont Paris',
+    'Odyssey Lichi Lush M EDP 100ml':'Armaf',
+    'Rome Imagine Set 2 Pcs 100ml':'Mast Perfume',
+    'Dunescape Dubai M EDP 100ml':'Armaf',
+    'Hayaati Al Maleky U EDP 100ml':'Lattafa',
+    'Badee Al Oud Sublime U EDP 100ml':'Lattafa',
+    'Atlas U EDP 55ml':'Lattafa',
+    'Nitro White Intensely M Extrait 100ml':'Dumont Paris',
+    'Vulcan Baie W EDP 100ml':'French Avenue',
+    'Hawas Private Dulce U EDP 100ml':'Rasasi',
+    'Freeze 100ml':'Riiffs',
+    'Rome Melancholia W EDP 100ml':'Mast Perfume',
+    'Nebras U EDP 100ml':'Lattafa',
+    'Freeze In Flames U Extrait 100ml':'Riiffs',
+    'Berry On Top U EDP 90ml':'Lattafa',
+    'Fakhar M EDP 100ml':'Lattafa',
+    'Hawas Private Terra U EDP 100ml':'Rasasi',
+    'Emmer U EDP 100ml':'Lattafa',
+    'Nitro Red Intensely U Extrait 100ml':'Dumont Paris',
+    'Marigold U EDP 100ml':'Almas',
+    'Badee Al Oud Collection':'Lattafa',
+    'Afeef U EDP 100ml':'Lattafa',
+    'Mussamam White Intense U EDP 100ml':'Lattafa',
+    'Ahtifal Ladies Night W Extrait 100ml':'Anfar',
+    'Ahtifal Show Time U Extrait 100ml':'Anfar',
+    'Fairy Tale W EDP 100ml':'Maison Asrar',
+    'Ruby Fizz U EDP 100ml':'Gulf Orchid',
+    'Sweet Heaven Cherry U EDP 100ml':'Gulf Orchid'
+  };
+
+  // Género para los perfumes que NO tienen M, W o U en el nombre.
+  // Usa 'M' (hombre), 'W' (mujer) o 'U' (unisex). Ejemplo:
+  //   'Freeze 100ml':'U',
+  const GENEROS_EXTRA = {
+  };
+
+  const CASAS_NORM = {}, GENEROS_NORM = {};
+  Object.keys(CASAS).forEach(function(k){ CASAS_NORM[clave(k)] = CASAS[k]; });
+  Object.keys(GENEROS_EXTRA).forEach(function(k){ GENEROS_NORM[clave(k)] = GENEROS_EXTRA[k]; });
+
+  function detectarMarca(n){
+    return CASAS_NORM[clave(n)] || 'Otras';
+  }
+
+  function detectarGenero(n){
+    if(GENEROS_NORM[clave(n)]) return GENEROS_NORM[clave(n)];
+    if(/\bfemme\b/i.test(n)) return 'W';
+    if(/\bhomme\b/i.test(n)) return 'M';
+    const m = n.match(/\s(M|W|U)(\s|$)/);
+    return m ? m[1] : '';
+  }
+
+  // Etiquetar cada tarjeta
+  const marcasPresentes = new Set();
+  gridCatalogo.querySelectorAll('.frasco').forEach(function(f, i){
+    const nombre = f.querySelector('h3').textContent;
+    f.dataset.genero = detectarGenero(nombre);
+    f.dataset.marca = detectarMarca(nombre);
+    f.dataset.orden = i;
+    marcasPresentes.add(f.dataset.marca);
+  });
+
+  // Crear un botón por cada marca
+  Array.from(marcasPresentes).sort(function(a, b){
+    if(a === 'Otras') return 1;
+    if(b === 'Otras') return -1;
+    return a.localeCompare(b);
+  }).forEach(function(m){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.dataset.marca = m;
+    b.textContent = m;
+    chipsMarca.appendChild(b);
+  });
+
+  function precioNum(f){
+    return parseInt(f.querySelector('.precio').textContent.replace(/\D/g, ''), 10) || 0;
+  }
+
+  // Hombre = hombre + unisex | Mujer = mujer + unisex | Unisex = solo unisex
+  function coincideGenero(f){
+    const g = f.dataset.genero;
+    if(generoActivo === 'todos') return true;
+    if(generoActivo === 'M') return g === 'M' || g === 'U';
+    if(generoActivo === 'W') return g === 'W' || g === 'U';
+    return g === 'U';
+  }
+
+  function aplicar(){
     const q = normalizar(buscador.value.trim());
+    const orden = selOrden.value;
+    const tarjetas = Array.from(gridCatalogo.querySelectorAll('.frasco'));
+
+    tarjetas.sort(function(a, b){
+      const ag = (a.dataset.agotado === 'true') - (b.dataset.agotado === 'true');
+      if(ag !== 0) return ag;                       // agotados siempre al final
+      const na = a.querySelector('h3').textContent;
+      const nb = b.querySelector('h3').textContent;
+      if(orden === 'az') return na.localeCompare(nb);
+      if(orden === 'menor') return precioNum(a) - precioNum(b);
+      if(orden === 'mayor') return precioNum(b) - precioNum(a);
+      if(orden === 'marca') return a.dataset.marca.localeCompare(b.dataset.marca) || na.localeCompare(nb);
+      return a.dataset.orden - b.dataset.orden;
+    });
+
     let visibles = 0;
-    gridCatalogo.querySelectorAll('.frasco').forEach(function(f){
+    tarjetas.forEach(function(f){
+      gridCatalogo.appendChild(f);
       const nombre = normalizar(f.querySelector('h3').textContent);
-      const coincide = nombre.includes(q);
-      f.style.display = coincide ? '' : 'none';
-      if(coincide) visibles++;
+      const ok = nombre.includes(q)
+        && coincideGenero(f)
+        && (marcaActiva === 'todas' || f.dataset.marca === marcaActiva);
+      f.style.display = ok ? '' : 'none';
+      if(ok) visibles++;
     });
     sinResultados.style.display = visibles === 0 ? 'block' : 'none';
+  }
+
+  // Eventos
+  buscador.addEventListener('input', aplicar);
+  selOrden.addEventListener('change', aplicar);
+
+  chipsGenero.forEach(function(c){
+    c.addEventListener('click', function(){
+      chipsGenero.forEach(function(x){ x.classList.remove('activo'); });
+      c.classList.add('activo');
+      generoActivo = c.dataset.genero;
+      aplicar();
+    });
+  });
+
+  chipsMarca.addEventListener('click', function(e){
+    const c = e.target.closest('.chip');
+    if(!c) return;
+    chipsMarca.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('activo'); });
+    c.classList.add('activo');
+    marcaActiva = c.dataset.marca;
+    aplicar();
+  });
+
+  document.getElementById('limpiarFiltros').addEventListener('click', function(){
+    buscador.value = '';
+    selOrden.value = 'original';
+    generoActivo = 'todos';
+    marcaActiva = 'todas';
+    chipsGenero.forEach(function(x){ x.classList.toggle('activo', x.dataset.genero === 'todos'); });
+    chipsMarca.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('activo', x.dataset.marca === 'todas'); });
+    aplicar();
   });
 
   // ===== ZOOM (LIGHTBOX) =====
