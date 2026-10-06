@@ -1166,7 +1166,7 @@ nav{ top:34px; }
       <button type="button" class="btn btn-pedir" onclick="agregarAlCarrito('Montale Paris Arabians Tonka U EDP 100ml', '$485.000')">Agregar al carrito</button>
     </div>
 
-    <div class="frasco" data-agotado="true">
+    <div class="frasco" data-agotado="false">
       <div class="frasco-img">
         <img class="foto" src="imagenes/Hawas Pour Homme M EDP 100ml.jpeg" alt="Hawas Pour Homme M EDP 100ml" onerror="this.style.display='none'; this.parentElement.classList.add('sin-foto');">
         <img class="foto slide-extra" data-slide="1" src="imagenes/Hawas Pour Homme M EDP 100ml 2.jpeg" alt="" onerror="this.remove();">
@@ -1251,6 +1251,97 @@ nav{ top:34px; }
     </div>
 
   </div>
+
+<script>
+      const MOSTRAR_NUEVOS = True ; [  // false = ocultas
+    ['Supremacy Collector\'s Edition M EDP 100ml', '$XXX.XXX', true],
+    ['Eter Arabian Sky M EDP 100ml', '$XXX.XXX', true],
+    ['Soprano Ice U EDP 100ml', '$XXX.XXX', true],
+    ['Vulcan Feu U EDP 100ml', '$XXX.XXX', true],
+    ['Odyssey Homme White M EDP 100ml', '$XXX.XXX', true],
+    ['Qimmah W EDP 100ml', '$XXX.XXX', true],
+    ['Badee Al Oud Honor And Glory U EDP 100ml', '$XXX.XXX', true],
+    ['CK One M EDT 100ml', '$XXX.XXX', true],
+    ['Now Pink W EDP 100ml', '$XXX.XXX', true],
+    ['Amber Empire W EDP 100ml', '$XXX.XXX', true],
+    ['Midnight Frost Tangerine U EDP 100ml', '$XXX.XXX', true],
+    ['Issey Miyake 125ml', '$XXX.XXX', true],
+    ['Mayar Natural Intense 100ml', '$XXX.XXX', true],
+    ['Mayar Cherry Intense 100ml', '$XXX.XXX', true],
+    ['Rome Pour Femme 100ml', '$XXX.XXX', true],
+    ['Midnight Frost Intense M Extrait 100ml', '$XXX.XXX', true],
+    ['Badee Al Oud Amethyst U EDP 100ml', '$XXX.XXX', true],
+    ['212 VIP M EDT 100ml', '$XXX.XXX', true],
+    ['Yara Elixir W EDP 100ml', '$XXX.XXX', true],
+    ['Vulcan Sable U EDP 100ml', '$XXX.XXX', true],
+    ['Hawas Private Luceo U EDP 100ml', '$XXX.XXX', true],
+    ['9 Pm Elixir M Perfume 100ml', '$XXX.XXX', true],
+    ['Liquid Brun U EDP 100ml', '$XXX.XXX', true],
+    ['Pacific Aura M EDP 100ml', '$XXX.XXX', true],
+    ['Hayaati M EDP 100ml', '$XXX.XXX', true],
+    ['Rome Melancholia M EDP 100ml', '$XXX.XXX', true],
+    ['Tropical Vibe U EDP 100ml', '$XXX.XXX', true],
+    ['Nitro Gold U Extrait 100ml', '$XXX.XXX', true],
+    ['Odyssey Lichi Lush M EDP 100ml', '$XXX.XXX', true],
+    ['Rome Imagine Set 2 Pcs 100ml', '$XXX.XXX', true],
+    ['Dunescape Dubai M EDP 100ml', '$XXX.XXX', true],
+    ['Hayaati Al Maleky U EDP 100ml', '$XXX.XXX', true],
+    ['Badee Al Oud Sublime U EDP 100ml', '$XXX.XXX', true],
+    ['Atlas U EDP 55ml', '$XXX.XXX', true],
+    ['Nitro White Intensely M Extrait 100ml', '$XXX.XXX', true],
+    ['Vulcan Baie W EDP 100ml', '$XXX.XXX', true],
+    ['Hawas Private Dulce U EDP 100ml', '$XXX.XXX', true],
+    ['Freeze 100ml', '$XXX.XXX', true],
+    ['Rome Melancholia W EDP 100ml', '$XXX.XXX', true],
+    ['Nebras U EDP 100ml', '$XXX.XXX', true],
+    ['Freeze In Flames U Extrait 100ml', '$XXX.XXX', true],
+    ['Berry On Top U EDP 90ml', '$XXX.XXX', true],
+    ['Fakhar M EDP 100ml', '$XXX.XXX', true],
+    ['Hawas Private Terra U EDP 100ml', '$XXX.XXX', true],
+    ['Emmer U EDP 100ml', '$XXX.XXX', true],
+    ['Nitro Red Intensely U Extrait 100ml', '$XXX.XXX', true],
+    ['Marigold U EDP 100ml', '$XXX.XXX', true],
+    ['Badee Al Oud Collection', '$XXX.XXX', true],
+    ['Afeef U EDP 100ml', '$XXX.XXX', true],
+    ['Mussamam White Intense U EDP 100ml', '$XXX.XXX', true],
+    ['Ahtifal Ladies Night W Extrait 100ml', '$XXX.XXX', true],
+    ['Ahtifal Show Time U Extrait 100ml', '$XXX.XXX', true],
+    ['Fairy Tale W EDP 100ml', '$XXX.XXX', true],
+    ['Ruby Fizz U EDP 100ml', '$XXX.XXX', true],
+    ['Sweet Heaven Cherry U EDP 100ml', '$XXX.XXX', true]
+  ];
+
+  (function(){
+    if(!MOSTRAR_NUEVOS) return;
+    const grid = document.querySelector('.grid-catalogo');
+    NUEVOS.forEach(function(p){
+      const nombre = p[0], precio = p[1], agotado = p[2] === true;
+      const base = 'imagenes/' + nombre;
+      const card = document.createElement('div');
+      card.className = 'frasco';
+      card.dataset.agotado = agotado ? 'true' : 'false';
+      card.innerHTML =
+        '<div class="frasco-img">' +
+          '<img class="foto" src="' + base + '.jpeg" alt="' + nombre + '" onerror="this.style.display=\'none\'; this.parentElement.classList.add(\'sin-foto\');">' +
+          '<img class="foto slide-extra" data-slide="1" src="' + base + ' 2.jpeg" alt="" onerror="this.remove();">' +
+          '<img class="foto slide-extra" data-slide="2" src="' + base + ' 3.jpeg" alt="" onerror="this.remove();">' +
+          '<button type="button" class="carrusel-flecha flecha-izq" onclick="moverCarrusel(this,-1)">‹</button>' +
+          '<button type="button" class="carrusel-flecha flecha-der" onclick="moverCarrusel(this,1)">›</button>' +
+          '<div class="badge-agotado">Agotado</div>' +
+        '</div>' +
+        '<h3></h3>' +
+        '<div class="precio"></div>' +
+        '<button type="button" class="btn btn-pedir">Agregar al carrito</button>';
+      card.querySelector('h3').textContent = nombre;
+      card.querySelector('.precio').textContent = precio;
+      card.querySelector('.btn-pedir').addEventListener('click', function(){
+        agregarAlCarrito(nombre, precio);
+      });
+      grid.appendChild(card);
+    });
+  })();
+</script>
+
   <p class="sin-resultados" id="sinResultados">No encontramos ese perfume. Prueba con otra palabra.</p>
 
 </section>
