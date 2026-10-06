@@ -748,9 +748,21 @@ nav{ top:34px; }
 .filtros select:focus{ border-color:var(--gold); }
 
 @media (max-width:900px){
-  .catalogo-layout{ flex-direction:column; gap:1.6rem; }
-  .filtros{ width:100%; position:static; }
+  .catalogo-layout{
+    flex-direction:column;
+    align-items:stretch;      /* NUEVA: ocupa solo el ancho de la pantalla */
+    gap:1.6rem;
+  }
+  .filtros{
+    width:100%;
+    position:static;
+    max-height:none;          /* NUEVA: sin límite de alto en celular */
+    overflow:visible;
+  }
+  .catalogo-contenido{ width:100%; }
+  .grid-catalogo{ grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); }   /* NUEVA */
 }
+html, body{ max-width:100%; overflow-x:hidden; }
 
 </style>
 </head>
