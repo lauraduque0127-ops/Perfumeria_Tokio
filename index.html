@@ -840,6 +840,29 @@ nav{
   section{ padding-left:4vw; padding-right:4vw; }
 }
 
+/* ===== MENÚ EN CELULAR ===== */
+@media (max-width:760px){
+  nav{
+    flex-wrap:wrap;
+    row-gap:0.5rem;
+  }
+  .nav-links{
+    display:flex !important;
+    order:3;
+    width:100%;
+    justify-content:space-between;
+    gap:0.5rem;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    padding-top:0.5rem;
+    border-top:1px solid var(--line);
+  }
+  .hero{ padding-top:150px; }
+}
+
+/* Que al tocar un link la sección no quede tapada por el menú */
+section{ scroll-margin-top:130px; }
+
 </style>
 </head>
 <body>
