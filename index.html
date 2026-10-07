@@ -1714,7 +1714,29 @@ nav{
 
   // ===== CARRITO =====
   const NUMERO_WHATSAPP = "573144478184";
-  let carrito = [];
+  const CLAVE_CARRITO = 'tokio_carrito';
+
+  function cargarCarrito(){
+    try{
+      const g = JSON.parse(localStorage.getItem(CLAVE_CARRITO));
+      const SIETE_DIAS = 7 * 24 * 60 * 60 * 1000;
+      if(g && Array.isArray(g.items) && (Date.now() - g.t) < SIETE_DIAS){
+        return g.items.filter(function(i){
+          return i && i.nombre && i.precio && i.cantidad > 0;
+        });
+      }
+    }catch(e){}
+    return [];
+  }
+
+  function guardarCarrito(){
+    try{
+      localStorage.setItem(CLAVE_CARRITO, JSON.stringify({ t: Date.now(), items: carrito }));
+    }catch(e){}
+  }
+
+  let carrito = cargarCarrito();
+
   const ENVIO_GRATIS_DESDE = 300000;   // cambia este valor por el real
 
   function agregarAlCarrito(nombre, precio){
@@ -1784,6 +1806,7 @@ nav{
     const contador = document.getElementById('carritoContador');
     const totalItems = carrito.reduce(function(acc, i){ return acc + i.cantidad; }, 0);
     contador.textContent = totalItems;
+    guardarCarrito();   // NUEVA
     document.getElementById('carritoTotal').textContent = calcularTotal();
     actualizarEnvio(); 
     const cont = document.getElementById('carritoItems');
